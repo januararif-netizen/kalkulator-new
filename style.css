@@ -7,26 +7,26 @@
 
 :root {
     --bg-primary: #1a1a1a;
-    --bg-secondary: #2a2a2a;
+    --bg-secondary: #494747;
     --text-primary: #ffffff;
-    --text-secondary: #a0a0a0;
+    --text-secondary: #f4f0f0;
     --accent: #000e11;
-    --accent-light: #67e8f9;
-    --operator-bg: #0e7490;
-    --equals-bg: #3b82f6;
-    --gradient-start: #6e9ed9;
-    --gradient-end: #0ccff1;
-    --transition: all 0.3s ease;
+    --accent-light: #fbfdfe;
+    --operator-bg: #245664;
+    --equals-bg: #5a91e9;
+    --gradient-start: #62c5fe;
+    --gradient-end: #4cb9f8;
+    --transition: all 0.5s ease;
 }
 
 body.light-theme {
     --bg-primary: #f3f4f6;
     --bg-secondary: #ffffff;
-    --text-primary: #111827;
-    --text-secondary: #4b5563;
+    --text-primary: #0f0e0e;
+    --text-secondary: #201e1e;
     --accent: #1e40af;
-    --accent-light: #60a5fa;
-    --operator-bg: #1e40af;
+    --accent-light: #000000;
+    --operator-bg: #dbe1f4;
     --equals-bg: #3b82f6;
 }
 
@@ -125,6 +125,7 @@ body.light-theme .menu-item:hover {
 }
 
 .expression {
+    display: none;
     font-size: 1.25rem;
     color: var(--text-primary);
     text-align: right;
@@ -185,7 +186,7 @@ body.light-theme .menu-item:hover {
 .calc-btn.equals {
     background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
     color: white;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 15px rgba;
 }
 
 .calc-btn.operator {
@@ -216,7 +217,7 @@ body.light-theme .calc-btn.number {
 
 body.light-theme .calc-btn.function {
     background-color: #e5e7eb;
-    color: #1e40af;
+    color: #010512;
 }
 
 .calc-btn.inverse {
@@ -242,7 +243,7 @@ body.light-theme .calc-btn.function {
 
 body.light-theme .slide-btn {
     background-color: #e5e7eb;
-    color: #1e40af;
+    color: #010720;
 }
 
 .slide-btn:disabled {
@@ -264,11 +265,11 @@ body.light-theme .slide-btn {
 }
 
 body.light-theme .indicator {
-    background-color: #9ca3af;
+    background-color: #c6c6c8;
 }
 
 .indicator.active {
-    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    background: #c6c6c8;
     width: 24px;
     border-radius: 4px;
 }
