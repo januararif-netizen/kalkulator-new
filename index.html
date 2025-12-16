@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wallpaper-container" id="wallpaper"></div>
+    
+    <div class="calculator-container">
+        <!-- Header -->
+        <div class="header">
+            <button class="menu-btn" id="menuBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <button class="menu-item" id="historyBtn"> History</button>
+                <button class="menu-item" id="clearHistoryBtn"> Clear All History</button>
+                <button class="menu-item" id="converterBtn"> Converter</button>
+                <button class="menu-item" id="themeBtn"> Theme ›</button>
+                <div class="submenu" id="themeSubmenu">
+                    <button class="menu-item" id="darkThemeBtn">● Dark</button>
+                    <button class="menu-item" id="lightThemeBtn">● Light</button>
+                </div>
+                <button class="menu-item" id="wallpaperBtn"> Set Wallpaper</button>
+                <button class="menu-item" id="removeWallpaperBtn"> Remove Wallpaper</button>
+            </div>
+        </div>
+
+        <input type="file" class="file-input" id="fileInput" accept="image/*">
+
+        <!-- Display -->
+        <div class="display-container">
+            <input type="text" class="expression" id="expression" readonly>
+            <input type="text" class="display" id="display" value="0">
+        </div>
+
+        <!-- Calculator Buttons -->
+        <div class="button-container">
+            <div class="button-slides" id="buttonSlides">
+                <!-- Slide 1: Basic -->
+                <div class="slide">
+                    <div class="button-grid" id="basicButtons"></div>
+                </div>
+
+                <!-- Slide 2: Advanced -->
+                <div class="slide">
+                    <div class="button-grid" id="advancedButtons"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide Controls -->
+        <div class="slide-controls">
+            <button class="slide-btn" id="prevSlideBtn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            
+            <div class="slide-indicators">
+                <div class="indicator active" id="indicator1"></div>
+                <div class="indicator" id="indicator2"></div>
+            </div>
+            
+            <button class="slide-btn" id="nextSlideBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">History</h3>
+                <button class="close-btn" id="closeModalBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <!-- Converter Modal -->
+    <div class="modal-overlay" id="converterModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Converter</h3>
+                <button class="close-btn" id="closeConverterBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="converter-content">
+                <div class="converter-section">
+                    <label>Type:</label>
+                    <select id="converterType" class="converter-select">
+                        <option value="currency"> Currency</option>
+                        <option value="temperature"> Temperature</option>
+                    </select>
+                </div>
+
+                <div class="converter-section">
+                    <label>Value:</label>
+                    <input type="number" id="converterInput" class="converter-input" placeholder="Enter value">
+                </div>
+
+                <div class="converter-section">
+                    <label>From:</label>
+                    <select id="converterFrom" class="converter-select">
+                        <option value="USD">USD (US Dollar)</option>
+                        <option value="JPY">JPY (Japanese Yen)</option>
+                        <option value="IDR">IDR (Indonesian Rupiah)</option>
+                    </select>
+                </div>
+
+                <div class="swap-container">
+                    <button id="swapBtn" class="swap-btn">⇅ Swap</button>
+                </div>
+
+                <div class="converter-section">
+                    <label>To:</label>
+                    <select id="converterTo" class="converter-select">
+                        <option value="USD">USD (US Dollar)</option>
+                        <option value="JPY">JPY (Japanese Yen)</option>
+                        <option value="IDR" selected>IDR (Indonesian Rupiah)</option>
+                    </select>
+                </div>
+
+                <div class="converter-section">
+                    <label>Result:</label>
+                    <div id="converterResult" class="converter-result">0</div>
+                </div>
+
+                <button id="convertBtn" class="convert-btn">Convert</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
