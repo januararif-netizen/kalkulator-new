@@ -660,3 +660,4 @@ function swapUnits() {
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', init);
+
