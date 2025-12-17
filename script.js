@@ -1,49 +1,46 @@
 // State variables
-let display = '0';
-let expression = '';
-let history = [];
-let lastResult = null;
-let canContinue = false;
-let currentSlide = 0;
-let isDegree = true;
-let isInverse = false;
-let theme = 'dark';
+let display = '0', expression = '', history = [], currentSlide = 0;
+let isDegree = true, isInverse = false, theme = 'dark';
+let showMenu = false, showHistory = false, showThemeMenu = false;
+let wallpaper = '', lastResult = null, canContinue = false;
 
 // DOM elements
-const displayEl = document.getElementById('display');
-const expressionEl = document.getElementById('expression');
-const historyListEl = document.getElementById('historyList');
-const buttonSlidesEl = document.getElementById('buttonSlides');
-const basicButtonsEl = document.getElementById('basicButtons');
-const advancedButtonsEl = document.getElementById('advancedButtons');
-const menuBtn = document.getElementById('menuBtn');
-const dropdownMenu = document.getElementById('dropdownMenu');
-const historyBtn = document.getElementById('historyBtn');
-const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-const themeBtn = document.getElementById('themeBtn');
-const themeSubmenu = document.getElementById('themeSubmenu');
-const darkThemeBtn = document.getElementById('darkThemeBtn');
-const lightThemeBtn = document.getElementById('lightThemeBtn');
-const wallpaperBtn = document.getElementById('wallpaperBtn');
-const removeWallpaperBtn = document.getElementById('removeWallpaperBtn');
-const fileInput = document.getElementById('fileInput');
-const wallpaperEl = document.getElementById('wallpaper');
-const prevSlideBtn = document.getElementById('prevSlideBtn');
-const nextSlideBtn = document.getElementById('nextSlideBtn');
-const indicator1 = document.getElementById('indicator1');
-const indicator2 = document.getElementById('indicator2');
-const historyModal = document.getElementById('historyModal');
-const closeModalBtn = document.getElementById('closeModalBtn');
-const converterModal = document.getElementById('converterModal');
-const converterBtn = document.getElementById('converterBtn');
-const closeConverterBtn = document.getElementById('closeConverterBtn');
-const converterType = document.getElementById('converterType');
-const converterInput = document.getElementById('converterInput');
-const converterFrom = document.getElementById('converterFrom');
-const converterTo = document.getElementById('converterTo');
-const converterResult = document.getElementById('converterResult');
-const convertBtn = document.getElementById('convertBtn');
-const swapBtn = document.getElementById('swapBtn');
+const el = {
+    display: document.getElementById('display'),
+    expression: document.getElementById('expression'),
+    historyList: document.getElementById('historyList'),
+    buttonSlides: document.getElementById('buttonSlides'),
+    basicButtons: document.getElementById('basicButtons'),
+    advancedButtons: document.getElementById('advancedButtons'),
+    menuBtn: document.getElementById('menuBtn'),
+    dropdownMenu: document.getElementById('dropdownMenu'),
+    historyBtn: document.getElementById('historyBtn'),
+    clearHistoryBtn: document.getElementById('clearHistoryBtn'),
+    themeBtn: document.getElementById('themeBtn'),
+    themeSubmenu: document.getElementById('themeSubmenu'),
+    darkThemeBtn: document.getElementById('darkThemeBtn'),
+    lightThemeBtn: document.getElementById('lightThemeBtn'),
+    wallpaperBtn: document.getElementById('wallpaperBtn'),
+    removeWallpaperBtn: document.getElementById('removeWallpaperBtn'),
+    fileInput: document.getElementById('fileInput'),
+    wallpaper: document.getElementById('wallpaper'),
+    prevSlideBtn: document.getElementById('prevSlideBtn'),
+    nextSlideBtn: document.getElementById('nextSlideBtn'),
+    indicator1: document.getElementById('indicator1'),
+    indicator2: document.getElementById('indicator2'),
+    historyModal: document.getElementById('historyModal'),
+    closeModalBtn: document.getElementById('closeModalBtn'),
+    converterModal: document.getElementById('converterModal'),
+    converterBtn: document.getElementById('converterBtn'),
+    closeConverterBtn: document.getElementById('closeConverterBtn'),
+    converterType: document.getElementById('converterType'),
+    converterInput: document.getElementById('converterInput'),
+    converterFrom: document.getElementById('converterFrom'),
+    converterTo: document.getElementById('converterTo'),
+    converterResult: document.getElementById('converterResult'),
+    convertBtn: document.getElementById('convertBtn'),
+    swapBtn: document.getElementById('swapBtn')
+};
 
 // Button configurations
 const basicButtons = [
@@ -55,11 +52,9 @@ const basicButtons = [
 ];
 
 const advancedButtons = [
-    ['√', 'π', 'x²', 'x³'],
+    ['√', 'π','x^y' , '!'],
     [isDegree ? 'Deg' : 'Rad', 'sin', 'cos', 'tan'],
-    ['Inv', 'e', 'ln', 'log'],
-    ['|x|', '!', 'exp', 'mod'],
-    ['(', ')', 'x^y', 'rand']
+    ['^2', 'e', 'ln', 'log']
 ];
 
 // Initialize
@@ -83,7 +78,7 @@ function loadSavedData() {
 
 // Generate buttons
 function generateButtons() {
-    basicButtonsEl.innerHTML = '';
+    el.basicButtons.innerHTML = '';
     basicButtons.flat().forEach(btn => {
         const button = document.createElement('button');
         button.textContent = btn;
@@ -95,160 +90,138 @@ function generateButtons() {
         else if (btn === '') button.classList.add('backspace');
         else button.classList.add('number');
         
-        button.addEventListener('click', () => handleClick(btn));
-        basicButtonsEl.appendChild(button);
+        button.onclick = () => handleClick(btn);
+        el.basicButtons.appendChild(button);
     });
     
-    advancedButtonsEl.innerHTML = '';
+    el.advancedButtons.innerHTML = '';
     advancedButtons.flat().forEach(btn => {
         const button = document.createElement('button');
         button.textContent = btn;
         button.className = 'calc-btn function';
-        
         if (btn === 'Inv' && isInverse) button.style.opacity = '0.5';
-        
-        button.addEventListener('click', () => handleClick(btn));
-        advancedButtonsEl.appendChild(button);
+        button.onclick = () => handleClick(btn);
+        el.advancedButtons.appendChild(button);
     });
 }
 
 // Setup event listeners
 function setupEventListeners() {
-    menuBtn.addEventListener('click', (e) => {
+    el.menuBtn.onclick = (e) => {
         e.stopPropagation();
-        dropdownMenu.classList.toggle('show');
-    });
+        el.dropdownMenu.classList.toggle('show');
+    };
     
-    document.addEventListener('click', () => {
-        dropdownMenu.classList.remove('show');
-        themeSubmenu.classList.remove('show');
-    });
+    document.onclick = () => {
+        el.dropdownMenu.classList.remove('show');
+        el.themeSubmenu.classList.remove('show');
+    };
     
-    dropdownMenu.addEventListener('click', (e) => e.stopPropagation());
+    el.dropdownMenu.onclick = (e) => e.stopPropagation();
     
-    themeBtn.addEventListener('click', (e) => {
+    el.themeBtn.onclick = (e) => {
         e.stopPropagation();
-        themeSubmenu.classList.toggle('show');
-    });
+        el.themeSubmenu.classList.toggle('show');
+    };
     
-    darkThemeBtn.addEventListener('click', () => {
+    el.darkThemeBtn.onclick = () => {
         setTheme('dark');
         localStorage.setItem('theme', 'dark');
-        dropdownMenu.classList.remove('show');
-    });
+        el.dropdownMenu.classList.remove('show');
+    };
     
-    lightThemeBtn.addEventListener('click', () => {
+    el.lightThemeBtn.onclick = () => {
         setTheme('light');
         localStorage.setItem('theme', 'light');
-        dropdownMenu.classList.remove('show');
-    });
+        el.dropdownMenu.classList.remove('show');
+    };
     
-    historyBtn.addEventListener('click', () => {
-        historyModal.classList.add('show');
-        dropdownMenu.classList.remove('show');
+    el.historyBtn.onclick = () => {
+        el.historyModal.classList.add('show');
+        el.dropdownMenu.classList.remove('show');
         updateHistoryDisplay();
-    });
+    };
     
-    clearHistoryBtn.addEventListener('click', () => {
+    el.clearHistoryBtn.onclick = () => {
         if (confirm('Hapus semua riwayat?')) {
-            history = [];
-            saveHistory();
-            dropdownMenu.classList.remove('show');
+            clearAllHistory();
+            el.dropdownMenu.classList.remove('show');
         }
-    });
+    };
     
-    wallpaperBtn.addEventListener('click', () => {
-        fileInput.click();
-        dropdownMenu.classList.remove('show');
-    });
+    el.wallpaperBtn.onclick = () => {
+        el.fileInput.click();
+        el.dropdownMenu.classList.remove('show');
+    };
     
-    removeWallpaperBtn.addEventListener('click', () => {
+    el.removeWallpaperBtn.onclick = () => {
         setWallpaper('');
         localStorage.removeItem('wallpaper');
-        dropdownMenu.classList.remove('show');
-    });
+        el.dropdownMenu.classList.remove('show');
+    };
     
-    fileInput.addEventListener('change', handleWallpaper);
+    el.fileInput.onchange = handleWallpaper;
+    el.closeModalBtn.onclick = () => el.historyModal.classList.remove('show');
     
-    closeModalBtn.addEventListener('click', () => {
-        historyModal.classList.remove('show');
-    });
+    el.historyModal.onclick = (e) => {
+        if (e.target === el.historyModal) el.historyModal.classList.remove('show');
+    };
     
-    historyModal.addEventListener('click', (e) => {
-        if (e.target === historyModal) {
-            historyModal.classList.remove('show');
-        }
-    });
+    el.converterBtn.onclick = () => {
+        el.converterModal.classList.add('show');
+        el.dropdownMenu.classList.remove('show');
+    };
     
-    converterBtn.addEventListener('click', () => {
-        converterModal.classList.add('show');
-        dropdownMenu.classList.remove('show');
-    });
+    el.closeConverterBtn.onclick = () => el.converterModal.classList.remove('show');
     
-    closeConverterBtn.addEventListener('click', () => {
-        converterModal.classList.remove('show');
-    });
+    el.converterModal.onclick = (e) => {
+        if (e.target === el.converterModal) el.converterModal.classList.remove('show');
+    };
     
-    converterModal.addEventListener('click', (e) => {
-        if (e.target === converterModal) {
-            converterModal.classList.remove('show');
-        }
-    });
+    el.converterType.onchange = updateConverterUnits;
+    el.convertBtn.onclick = performConversion;
+    el.swapBtn.onclick = swapUnits;
+    el.converterInput.oninput = performConversion;
     
-    converterType.addEventListener('change', updateConverterUnits);
-    convertBtn.addEventListener('click', performConversion);
-    swapBtn.addEventListener('click', swapUnits);
-    converterInput.addEventListener('input', performConversion);
-    
-    prevSlideBtn.addEventListener('click', () => {
+    el.prevSlideBtn.onclick = () => {
         if (currentSlide > 0) {
             currentSlide--;
             updateSlidePosition();
         }
-    });
+    };
     
-    nextSlideBtn.addEventListener('click', () => {
+    el.nextSlideBtn.onclick = () => {
         if (currentSlide < 1) {
             currentSlide++;
             updateSlidePosition();
         }
-    });
+    };
     
-    displayEl.addEventListener('click', function() {
-        this.focus();
-    });
-    
-    displayEl.addEventListener('focus', function() {
+    el.display.onclick = function() { this.focus(); };
+    el.display.onfocus = function() {
         this.setSelectionRange(this.value.length, this.value.length);
-    });
+    };
+    el.expression.onclick = () => el.display.focus();
     
-    expressionEl.addEventListener('click', function() {
-        displayEl.focus();
-    });
-    
-    displayEl.addEventListener('keydown', (e) => {
-        if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
-            return;
-        }
+    el.display.onkeydown = (e) => {
+        if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
         e.preventDefault();
         handleKeyboard(e);
-    });
+    };
     
-    window.addEventListener('keydown', handleKeyboard);
+    window.onkeydown = handleKeyboard;
 }
 
 // Handle button clicks
 function handleClick(btn) {
+    const ops = { '÷': '/', '×': '*', '−': '-' };
+    
     if (btn === 'AC') clearAll();
     else if (btn === '=') calculate();
     else if (btn === '⌫') backspace();
     else if (btn === '( )') handleParentheses();
-    else if (['÷', '×', '−', '+', '.', '%'].includes(btn)) {
-        if (btn === '÷') appendValue('/');
-        else if (btn === '×') appendValue('*');
-        else if (btn === '−') appendValue('-');
-        else appendValue(btn);
-    }
+    else if (ops[btn]) appendValue(ops[btn]);
+    else if (['÷', '×', '−', '+', '.', '%'].includes(btn)) appendValue(btn);
     else if (!isNaN(btn)) appendValue(btn);
     else if (btn === 'Deg' || btn === 'Rad') {
         isDegree = !isDegree;
@@ -261,19 +234,13 @@ function handleClick(btn) {
     }
     else if (['sin', 'cos', 'tan'].includes(btn)) appendTrig(btn);
     else if (btn === '√') appendValue('√(');
-    else if (btn === 'x²') appendValue('^2');
-    else if (btn === 'x³') appendValue('^3');
+    else if (btn === 'x²' || btn === '^2') appendValue('^2');
     else if (btn === 'x^y') appendValue('^');
     else if (btn === '!') appendValue('!');
     else if (btn === 'π') appendValue('π');
     else if (btn === 'e') appendValue('e');
     else if (btn === 'ln') appendValue('ln(');
     else if (btn === 'log') appendValue('log(');
-    else if (btn === '|x|') appendValue('abs(');
-    else if (btn === 'exp') appendValue('exp(');
-    else if (btn === 'mod') appendValue('mod');
-    else if (btn === 'rand') appendValue('rand()');
-    else if (btn === '(' || btn === ')') appendValue(btn);
 }
 
 // Handle parentheses
@@ -292,20 +259,17 @@ function handleParentheses() {
 
 // Append value
 function appendValue(val) {
-    let dispVal = val;
-    if (val === '*') dispVal = '×';
-    if (val === '/') dispVal = '÷';
+    let dispVal = val === '*' ? '×' : val === '/' ? '÷' : val;
 
     if (canContinue) {
         if (/[+\-×÷]/.test(dispVal)) {
-            display = display + dispVal;
+            display += dispVal;
             expression = display;
-            canContinue = false;
         } else {
             display = dispVal;
             expression = dispVal;
-            canContinue = false;
         }
+        canContinue = false;
     } else {
         if (display === '0' && val !== '.' && val !== '%') {
             display = dispVal;
@@ -315,14 +279,12 @@ function appendValue(val) {
             expression += dispVal;
         }
     }
-    
     updateDisplay();
 }
 
 // Append trig function
 function appendTrig(func) {
-    const funcStr = isInverse ? `a${func}(` : `${func}(`;
-    appendValue(funcStr);
+    appendValue(isInverse ? `a${func}(` : `${func}(`);
     isInverse = false;
     generateButtons();
 }
@@ -341,7 +303,6 @@ function backspace() {
         display = '0';
         expression = '';
     }
-    
     updateDisplay();
 }
 
@@ -387,15 +348,6 @@ function calculate() {
             expr = expr.replace(/(\d+\.?\d*|\([^()]+\))\^(\d+\.?\d*|\([^()]+\))/g, 'Math.pow($1,$2)');
         }
         
-        // Handle functions
-        expr = expr.replace(/√/g, 'Math.sqrt')
-            .replace(/\bln/g, 'Math.log')
-            .replace(/\blog/g, 'Math.log10')
-            .replace(/\babs/g, 'Math.abs')
-            .replace(/\bexp/g, 'Math.exp')
-            .replace(/\brand\s*\(\s*\)/g, 'Math.random()')
-            .replace(/\bmod\b/g, '%');
-        
         // Handle trig functions
         const trigFuncs = ['asin', 'acos', 'atan', 'sin', 'cos', 'tan'];
         for (const func of trigFuncs) {
@@ -439,52 +391,77 @@ function calculate() {
         display = result.toString();
         lastResult = result;
         canContinue = true;
-        
         updateDisplay();
     } catch (error) {
         display = 'Error';
         expression = '';
         canContinue = false;
         updateDisplay();
-        setTimeout(() => {
-            clearAll();
-        }, 1500);
+        setTimeout(() => clearAll(), 1500);
     }
 }
 
-// Handle keyboard
+// Handle keyboard - FUNGSI TUNGGAL (menghapus duplicate)
 function handleKeyboard(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        return;
-    }
-    
     if (e.key >= '0' && e.key <= '9') appendValue(e.key);
     else if (e.key === '+') appendValue('+');
-    else if (e.key === '-') appendValue('−');
-    else if (e.key === '*') { e.preventDefault(); appendValue('×'); }
-    else if (e.key === '/') { e.preventDefault(); appendValue('÷'); }
+    else if (e.key === '-') appendValue('-');
+    else if (e.key === '*') { e.preventDefault(); appendValue('*'); }
+    else if (e.key === '/') { e.preventDefault(); appendValue('/'); }
     else if (e.key === '.') appendValue('.');
     else if (e.key === '%') appendValue('%');
     else if (e.key === '(' || e.key === ')') appendValue(e.key);
+    else if (e.key === 'Enter') { e.preventDefault(); calculate(); }
     else if (e.key === 'Backspace') backspace();
     else if (e.key === 'Escape') clearAll();
+    else if (e.key === 'ArrowLeft' && currentSlide > 0) {
+        currentSlide--;
+        updateSlidePosition();
+    }
+    else if (e.key === 'ArrowRight' && currentSlide < 1) {
+        currentSlide++;
+        updateSlidePosition();
+    }
+    else if (e.key === 't') {
+        setTheme(theme === 'dark' ? 'light' : 'dark');
+        localStorage.setItem('theme', theme);
+    }
+    else if (e.key === 'h' || e.key === 'H') {
+        showHistory = !showHistory;
+        historyModal.classList.toggle('show', showHistory);
+        if (showHistory) {
+            updateHistoryDisplay();
+        }
+    }
+    else if (e.key === 'c' || e.key === 'C') {
+        e.preventDefault();
+        clearAllHistory();
+    }
+}
+
+// Clear all history
+function clearAllHistory() {
+    if (confirm('Apakah Anda yakin ingin menghapus semua riwayat?')) {
+        history = [];
+        saveHistory();
+        updateHistoryDisplay();
+    }
 }
 
 // Update display
 function updateDisplay() {
-    displayEl.value = display;
-    expressionEl.value = expression || '';
-    displayEl.scrollLeft = displayEl.scrollWidth;
+    el.display.value = display;
+    el.expression.value = expression || '';
+    el.display.scrollLeft = el.display.scrollWidth;
 }
 
 // Update slide position
 function updateSlidePosition() {
-    buttonSlidesEl.style.transform = `translateX(-${currentSlide * 100}%)`;
-    indicator1.classList.toggle('active', currentSlide === 0);
-    indicator2.classList.toggle('active', currentSlide === 1);
-    prevSlideBtn.disabled = currentSlide === 0;
-    nextSlideBtn.disabled = currentSlide === 1;
+    el.buttonSlides.style.transform = `translateX(-${currentSlide * 100}%)`;
+    el.indicator1.classList.toggle('active', currentSlide === 0);
+    el.indicator2.classList.toggle('active', currentSlide === 1);
+    el.prevSlideBtn.disabled = currentSlide === 0;
+    el.nextSlideBtn.disabled = currentSlide === 1;
 }
 
 // Theme functions
@@ -495,7 +472,7 @@ function setTheme(newTheme) {
 
 // Wallpaper functions
 function setWallpaper(wallpaperData) {
-    wallpaperEl.style.backgroundImage = wallpaperData ? `url(${wallpaperData})` : '';
+    el.wallpaper.style.backgroundImage = wallpaperData ? `url(${wallpaperData})` : '';
 }
 
 function handleWallpaper(e) {
@@ -516,9 +493,7 @@ function loadHistory() {
     for (let i = 0; i < 50; i++) {
         const item = localStorage.getItem(`calc_history_${i}`);
         if (item) {
-            try {
-                data[i] = JSON.parse(item);
-            } catch (e) {}
+            try { data[i] = JSON.parse(item); } catch (e) {}
         }
     }
     history = Object.values(data).filter(item => item && item.expression);
@@ -528,136 +503,115 @@ function saveHistory() {
     for (let i = 0; i < 50; i++) {
         localStorage.removeItem(`calc_history_${i}`);
     }
-    history.slice(-50).forEach((item, index) => {
-        localStorage.setItem(`calc_history_${index}`, JSON.stringify(item));
+    history.slice(-50).forEach((item, i) => {
+        localStorage.setItem(`calc_history_${i}`, JSON.stringify(item));
     });
 }
 
 function updateHistoryDisplay() {
-    historyListEl.innerHTML = '';
+    el.historyList.innerHTML = '';
     
     if (history.length === 0) {
-        const emptyMessage = document.createElement('p');
-        emptyMessage.className = 'empty-history';
-        emptyMessage.textContent = 'Tidak ada riwayat perhitungan';
-        historyListEl.appendChild(emptyMessage);
+        el.historyList.innerHTML = '<p class="empty-history">Tidak ada riwayat perhitungan</p>';
         return;
     }
     
     history.slice().reverse().forEach((item, i) => {
         const historyItem = document.createElement('div');
         historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+            <div class="history-expression">${item.expression}</div>
+            <div class="history-result">= ${item.result}</div>
+            <button class="delete-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        `;
         
-        const expr = document.createElement('div');
-        expr.className = 'history-expression';
-        expr.textContent = item.expression;
-        
-        const result = document.createElement('div');
-        result.className = 'history-result';
-        result.textContent = '= ' + item.result;
-        
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-btn';
-        deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            history = history.filter((_, idx) => idx !== history.length - 1 - i);
-            saveHistory();
-            updateHistoryDisplay();
-        });
-        
-        historyItem.appendChild(expr);
-        historyItem.appendChild(result);
-        historyItem.appendChild(deleteBtn);
-        
-        historyItem.addEventListener('click', () => {
+        historyItem.onclick = (e) => {
+            if (e.target.closest('.delete-btn')) return;
             display = item.result.toString();
             expression = item.expression;
             lastResult = item.result;
             canContinue = true;
-            historyModal.classList.remove('show');
+            el.historyModal.classList.remove('show');
             updateDisplay();
-        });
+        };
         
-        historyListEl.appendChild(historyItem);
+        historyItem.querySelector('.delete-btn').onclick = (e) => {
+            e.stopPropagation();
+            history.splice(history.length - 1 - i, 1);
+            saveHistory();
+            updateHistoryDisplay();
+        };
+        
+        el.historyList.appendChild(historyItem);
     });
 }
 
 // Converter functions
 function updateConverterUnits() {
-    const type = converterType.value;
-    converterFrom.innerHTML = '';
-    converterTo.innerHTML = '';
+    const type = el.converterType.value;
+    el.converterFrom.innerHTML = '';
+    el.converterTo.innerHTML = '';
+    
+    const units = type === 'currency' ? [
+        { value: 'USD', label: 'USD (US Dollar)' },
+        { value: 'JPY', label: 'JPY (Japanese Yen)' },
+        { value: 'IDR', label: 'IDR (Indonesian Rupiah)' }
+    ] : [
+        { value: 'C', label: '°C (Celsius)' },
+        { value: 'F', label: '°F (Fahrenheit)' },
+        { value: 'K', label: 'K (Kelvin)' }
+    ];
+    
+    units.forEach(unit => {
+        el.converterFrom.add(new Option(unit.label, unit.value));
+        el.converterTo.add(new Option(unit.label, unit.value));
+    });
     
     if (type === 'currency') {
-        const currencies = [
-            { value: 'USD', label: 'USD (US Dollar)' },
-            { value: 'JPY', label: 'JPY (Japanese Yen)' },
-            { value: 'IDR', label: 'IDR (Indonesian Rupiah)' }
-        ];
-        
-        currencies.forEach(curr => {
-            converterFrom.add(new Option(curr.label, curr.value));
-            converterTo.add(new Option(curr.label, curr.value));
-        });
-        
-        converterFrom.value = 'USD';
-        converterTo.value = 'IDR';
-    } else if (type === 'temperature') {
-        const temps = [
-            { value: 'C', label: '°C (Celsius)' },
-            { value: 'F', label: '°F (Fahrenheit)' },
-            { value: 'K', label: 'K (Kelvin)' }
-        ];
-        
-        temps.forEach(temp => {
-            converterFrom.add(new Option(temp.label, temp.value));
-            converterTo.add(new Option(temp.label, temp.value));
-        });
-        
-        converterFrom.value = 'C';
-        converterTo.value = 'F';
+        el.converterFrom.value = 'USD';
+        el.converterTo.value = 'IDR';
+    } else {
+        el.converterFrom.value = 'C';
+        el.converterTo.value = 'F';
     }
     
     performConversion();
 }
 
 function performConversion() {
-    const value = parseFloat(converterInput.value) || 0;
-    const type = converterType.value;
-    const from = converterFrom.value;
-    const to = converterTo.value;
+    const value = parseFloat(el.converterInput.value) || 0;
+    const type = el.converterType.value;
+    const from = el.converterFrom.value;
+    const to = el.converterTo.value;
     let result = 0;
     
     if (type === 'currency') {
-        const rates = {
-            'USD': 1,
-            'JPY': 149.50,
-            'IDR': 15750
+        const rates = { 'USD': 1, 'JPY': 149.50, 'IDR': 15750 };
+        result = (value / rates[from]) * rates[to];
+    } else {
+        const temp = {
+            'C-F': v => v * 9/5 + 32,
+            'C-K': v => v + 273.15,
+            'F-C': v => (v - 32) * 5/9,
+            'F-K': v => (v - 32) * 5/9 + 273.15,
+            'K-C': v => v - 273.15,
+            'K-F': v => (v - 273.15) * 9/5 + 32
         };
-        
-        const inUSD = value / rates[from];
-        result = inUSD * rates[to];
-    } else if (type === 'temperature') {
-        if (from === 'C' && to === 'F') result = (value * 9/5) + 32;
-        else if (from === 'C' && to === 'K') result = value + 273.15;
-        else if (from === 'F' && to === 'C') result = (value - 32) * 5/9;
-        else if (from === 'F' && to === 'K') result = (value - 32) * 5/9 + 273.15;
-        else if (from === 'K' && to === 'C') result = value - 273.15;
-        else if (from === 'K' && to === 'F') result = (value - 273.15) * 9/5 + 32;
-        else result = value;
+        result = temp[`${from}-${to}`] ? temp[`${from}-${to}`](value) : value;
     }
     
-    converterResult.textContent = result.toFixed(2);
+    el.converterResult.textContent = result.toFixed(2);
 }
 
 function swapUnits() {
-    const temp = converterFrom.value;
-    converterFrom.value = converterTo.value;
-    converterTo.value = temp;
+    [el.converterFrom.value, el.converterTo.value] = [el.converterTo.value, el.converterFrom.value];
     performConversion();
 }
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', init);
-
