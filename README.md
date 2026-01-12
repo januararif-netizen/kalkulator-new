@@ -2,7 +2,7 @@ PROJEK KALKULATOR SEDERHANA (JANUAR & GAVRA)
 
 Deskripsi
 Project ini merupakan aplikasi kalkulator sederhana berbasis HTML, CSS, dan JavaScript
-yang dapat melakukan operasi perhitungan dasar seperti penjumlahan, pengurangan, perkalian, dan pembagian.
+yang dapat melakukan operasi perhitungan dasar seperti penjumlahan, pengurangan, perkalian, dan pembagian serta Trigonometri.
 
 Kalkulator kami juga menggunakan fitur tambahan seperti :
 
@@ -64,3 +64,4 @@ Authors
 Januar Arif Wicaksono
 
 Gavra Darius Ulul Albab
+
