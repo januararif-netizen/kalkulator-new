@@ -1,4 +1,4 @@
-projek kalkulator sederhana Januar dan Gavra
+PROJEK KALKULATOR SEDERHANA (JANUAR & GAVRA)
 
 Deskripsi
 Project ini merupakan aplikasi kalkulator sederhana berbasis HTML, CSS, dan JavaScript
@@ -62,4 +62,5 @@ klik garis tiga di kiri atas untuk mencari fitur lanjutan seperti mengubah wallp
 
 Authors
 Januar Arif Wicaksono
+
 Gavra Darius Ulul Albab
