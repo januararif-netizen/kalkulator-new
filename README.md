@@ -61,7 +61,9 @@ klik tombol keyboard panah kiri atau kanan untuk pindah slide aritmatika biasa d
 klik garis tiga di kiri atas untuk mencari fitur lanjutan seperti mengubah wallpaper dan menghapus wallpaper dll.
 
 Authors
+
 Januar Arif Wicaksono
 
 Gavra Darius Ulul Albab
+
 
